@@ -1,92 +1,61 @@
-<p align="center">
-    <a href="http://kitura.io/">
-        <img src="https://landscape.cncf.io/logos/ibm-member.svg" height="100" alt="IBM Cloud">
-    </a>
-</p>
+# Premier League Player Dashboard
 
-<p align="center">
-    <a href="https://cloud.ibm.com">
-    <img src="https://img.shields.io/badge/IBM%20Cloud-powered-blue.svg" alt="IBM Cloud">
-    </a>
-    <img src="https://img.shields.io/badge/platform-node-lightgrey.svg?style=flat" alt="platform">
-    <img src="https://img.shields.io/badge/license-Apache2-blue.svg?style=flat" alt="Apache 2">
-</p>
+A Premier League player dashboard with two implementations running on separate ports:
 
-# Carbon React with Node.js
+| Folder | Stack | Port |
+|---|---|---|
+| [`react-app/`](react-app/) | React + Carbon Design System | **http://localhost:3000** |
+| [`python-app/`](python-app/) | Python + Streamlit + Matplotlib | **http://localhost:8501** |
 
-React is a popular framework for creating user interfaces in modular components. In this sample application, you will create a web application using Express and React to serve web pages in Node.js, complete with standard best practices, including a health check and application metric monitoring.
+Both apps share the same `players.json` dataset fetched from API-Football.
 
-This app contains an opinionated set of components for modern web development, including:
-
-* [React](https://facebook.github.io/react/)
-* [Sass](http://sass-lang.com/) 
-* [Carbon](https://www.carbondesignsystem.com/)
-* [Create React App](https://github.com/facebook/create-react-app)
-
-### Deploying 
-
-After you have created a new git repo from this git template, remember to rename the project.
-Edit `package.json` and change the default name to the name you used to create the template.
-
-Make sure you are logged into the IBM Cloud using the IBM Cloud CLI and have access 
-to you development cluster. If you are using OpenShift make sure you have logged into OpenShift CLI on the command line.
-
-```$bash
-npm install --location=global @ibmgaragecloud/cloud-native-toolkit-cli
-```
-
-Use the IBM Garage for Cloud CLI to register the GIT Repo with Tekton or Jenkins, using `--tekton` flag if using Tekton:
-
-```$bash
-oc sync <project> [--tekton]
-oc pipeline
-```
-
-Ensure you have the Cloud-Native Toolkit installed in your cluster to make this method of pipeline registry quick and easy [Cloud-Native Toolkit](https://cloudnativetoolkit.dev/)
-
-#### Native Application Development
-
-Install the latest [Node.js](https://nodejs.org/en/download/) 6+ LTS version.
-
-Once the Node toolchain has been installed, you can download the project dependencies with:
+## Run both apps at the same time
 
 ```bash
-npm install -g yarn
+# Install concurrently (one-time)
+npm install
+
+# Launch both apps side-by-side
+npm run start:all
+```
+
+React opens at **http://localhost:3000** and Streamlit at **http://localhost:8501** simultaneously, each with colour-coded log output in the same terminal.
+
+## Run individually
+
+### React app
+```bash
+cd react-app
 yarn install
-```
-
-##### Local development
-
-To run application for local development and get live updates on code changes:
-
-```sh
 yarn start:dev
+# → http://localhost:3000
 ```
 
-##### Test
-
-To run unit tests:
-
-```sh
-yarn test
+### Python app
+```bash
+cd python-app
+pip install -r requirements.txt
+python -m streamlit run streamlit_app.py
+# → http://localhost:8501
 ```
 
-##### Run production build
+## First-time setup: get player data
 
-To try a production build, run:
+```bash
+cd react-app
+# Add your API key to react-app/.env:
+#   REACT_APP_API_FOOTBALL_KEY=your_key_here
+node scripts/fetchPlayers.mjs
 
-```sh
-yarn build
-yarn start
+# Copy the data for the Python app too:
+cp src/data/players.json ../python-app/data/players.json
 ```
 
-## Next Steps
+## Features (both apps)
 
-* Learn more about augmenting your Node.js applications on IBM Cloud with the [Node Programming Guide](https://cloud.ibm.com/docs/node?topic=nodejs-getting-started).
-* Explore other [sample applications](https://cloud.ibm.com/developer/appservice/starter-kits) on IBM Cloud.
+- **Player Browser** — search, filter by position, sort, view player card + summary
+- **Compare Players** — two players side-by-side
+- **Team Formation** — 4-4-2 / 4-3-3 / 3-5-2 with position-aware squad generation and pitch visualisation
 
-## License
-
-This sample application is licensed under the Apache License, Version 2. Separate third-party code objects invoked within this code pattern are licensed by their respective providers pursuant to their own separate licenses. Contributions are subject to the [Developer Certificate of Origin, Version 1.1](https://developercertificate.org/) and the [Apache License, Version 2](https://www.apache.org/licenses/LICENSE-2.0.txt).
-
-[Apache License FAQ](https://www.apache.org/foundation/license-faq.html#WhatDoesItMEAN)
+## Data source
+Player data is fetched from [API-Football](https://www.api-sports.io/) (free plan, 2023 Premier League season).

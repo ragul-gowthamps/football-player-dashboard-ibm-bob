@@ -1,0 +1,8 @@
+[server]
+port = 8501
+address = "localhost"
+headless = true          # don't open browser automatically when launched from script
+
+[browser]
+serverAddress = "localhost"
+serverPort = 8501
